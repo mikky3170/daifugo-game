@@ -1,10 +1,10 @@
-/* [CSS Version: v1.2.2] 最終更新: 下部操作バー一本化（倍速ボタン被り解消）・超縦長セーフエリア最適化 */
+/* [CSS Version: v1.2.3] 最終更新: タブレット縦画面全幅化・CPUカード重なり深化・ボタン被り完全解消 */
 
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Noto+Serif+JP:wght@400;600&display=swap');
 
 :root {
-  /* 16:10縦画面コンテナ基準のカードサイズ設定 */
-  --card-height: clamp(50px, 10.5vh, 88px);
+  /* 縦画面コンテナ基準のカードサイズ設定 */
+  --card-height: clamp(48px, 10.5vh, 86px);
   --card-width: calc(var(--card-height) * 0.7);
   --card-overlap: calc(var(--card-width) * -0.35);
 }
@@ -32,13 +32,12 @@ body {
 }
 
 /* ============================================================
- * 16:10 タブレット縦画面基準 ビューポートコンテナ
- * 幅:高さ = 10:16 (0.625) を基本とし、PCでは中央固定・超縦長スマホではセーフエリア自然配分
+ * ビューポートコンテナ
+ * 縦向き（タブレット・スマホ）: 横幅100%全幅活用（黒帯ゼロ）
+ * 横向き（PC等のワイド画面）: 中央16:10フレーム配置
  * ============================================================ */
 #app-viewport {
   width: 100%;
-  max-width: calc(100vh * 0.625);
-  max-width: calc(100dvh * 0.625);
   height: 100%;
   height: 100vh;
   height: 100dvh;
@@ -54,6 +53,14 @@ body {
   padding-bottom: max(4px, env(safe-area-inset-bottom, 0px));
   padding-left: max(4px, env(safe-area-inset-left, 0px));
   padding-right: max(4px, env(safe-area-inset-right, 0px));
+}
+
+/* PC等の横長画面でのみ16:10フレームとして中央配置 */
+@media (orientation: landscape) and (min-width: 640px) {
+  #app-viewport {
+    max-width: calc(100vh * 0.625);
+    max-width: calc(100dvh * 0.625);
+  }
 }
 
 /* ヘッダーエリア */
@@ -73,7 +80,7 @@ body {
 
 .main-title {
   font-family: 'Cinzel', serif;
-  font-size: clamp(15px, 2.4vh, 22px);
+  font-size: clamp(15px, 2.3vh, 22px);
   letter-spacing: 2px;
   color: #d4af37;
   background: linear-gradient(180deg, #fff3a8 0%, #d4af37 50%, #aa7c11 100%);
@@ -334,12 +341,12 @@ body {
 }
 
 /* ============================================================
- * ゲーム盤面 (16:10 縦画面・超縦長対応レイアウト)
+ * ゲーム盤面
  * ============================================================ */
 #game-board {
   display: grid;
   grid-template-rows: auto 1fr auto;
-  grid-template-columns: minmax(64px, 20%) 1fr minmax(64px, 20%);
+  grid-template-columns: minmax(66px, 20%) 1fr minmax(66px, 20%);
   width: 100%;
   flex: 1;
   padding: 2px 4px;
@@ -373,7 +380,7 @@ body {
 
 /* キャラ名表示 */
 .char-badge {
-  font-size: clamp(10px, 1.5vh, 13px);
+  font-size: clamp(10px, 1.4vh, 13px);
   color: #fff3a8;
   background: rgba(212, 175, 55, 0.16);
   border: 1px solid rgba(212, 175, 55, 0.45);
@@ -639,13 +646,13 @@ body {
 
 #player-area.active-turn .your-turn-badge { visibility: visible; opacity: 1; }
 
-/* プレイヤー手札コンテナ */
+/* プレイヤー手札コンテナ（下部に適度な安全マージンを確保） */
 #player-hand { 
   display: flex; 
   justify-content: center; 
   align-items: flex-end; 
-  height: calc(var(--card-height) + 18px); 
-  margin-bottom: 0px; 
+  height: calc(var(--card-height) + 16px); 
+  margin-bottom: 2px; 
   max-width: 100%; 
   padding: 0 4px; 
   position: relative; 
@@ -724,7 +731,10 @@ body {
   flex-shrink: 0;
 }
 
-/* CPUカードスタック表示 */
+/* ============================================================
+ * CPUカードスタック表示
+ * サイズは縮小せず、重なり幅を深くして画面端見切れを解消
+ * ============================================================ */
 .cpu-card-stack {
   display: flex;
   align-items: center;
@@ -740,16 +750,19 @@ body {
   width: 100%;
   max-width: 100%;
   overflow: visible;
+  padding: 0 2px;
 }
+
+/* カードサイズを維持したまま、重なりを深くしてカード束全体をコンパクト化 */
 #cpu1 .cpu-card-stack .card-back, #cpu3 .cpu-card-stack .card-back {
-  margin-left: calc(var(--card-width) * -0.42);
+  margin-left: calc(var(--card-width) * -0.52);
 }
 #cpu1 .cpu-card-stack .card-back:first-child, #cpu3 .cpu-card-stack .card-back:first-child {
   margin-left: 0;
 }
 
 /* ============================================================
- * 下部操作バー (16:10統一・横1行配置＆倍速ボタン安全配置)
+ * 下部操作バー (被り解消・1行スマートレイアウト)
  * ============================================================ */
 #bottom-bar {
   width: 100%;
@@ -760,7 +773,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   backdrop-filter: blur(10px);
   z-index: 100;
   flex-shrink: 0;
@@ -781,7 +794,8 @@ body {
   align-items: center;
   gap: 6px;
   flex: 1 1 auto;
-  max-width: 320px;
+  min-width: 0;
+  max-width: 260px;
 }
 
 .right-actions {
@@ -792,7 +806,7 @@ body {
   flex: 0 0 auto;
 }
 
-/* ボタンサイズ（16:10枠内で横1行に収まる設計） */
+/* ボタンサイズ（幅配分を最適化し、スマホ幅でも衝突・被りを完全防止） */
 .btn {
   height: clamp(32px, 4.8vh, 38px);
   border-radius: 5px;
@@ -800,15 +814,15 @@ body {
   background: linear-gradient(180deg, #3a4856 0%, #25313d 100%);
   color: #d0d7de;
   font-family: 'Noto Serif JP', serif;
-  font-size: clamp(10.5px, 1.5vh, 12.5px);
-  letter-spacing: 0.3px;
+  font-size: clamp(10.5px, 1.4vh, 12.5px);
+  letter-spacing: 0.2px;
   cursor: pointer;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
   transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 6px;
+  padding: 0 5px;
   white-space: nowrap;
 }
 
@@ -834,17 +848,19 @@ body {
   box-shadow: 0 0 10px rgba(212, 175, 55, 0.6);
 }
 
-/* メインアクションボタン */
+/* メインアクションボタン（flexで伸縮し重なりを防止） */
 #play-btn {
   flex: 1.4;
-  max-width: 140px;
+  min-width: 72px;
+  max-width: 130px;
   font-weight: bold;
-  font-size: clamp(11.5px, 1.6vh, 13.5px);
+  font-size: clamp(11px, 1.5vh, 13px);
 }
 
 #pass-btn {
   flex: 0.9;
-  max-width: 80px;
+  min-width: 52px;
+  max-width: 76px;
 }
 
 #go-exchange-btn, #exchange-btn {
@@ -854,20 +870,20 @@ body {
 }
 
 #auto-play-btn, #stats-btn, #reset-btn {
-  min-width: 48px;
-  padding: 0 5px;
+  min-width: 44px;
+  padding: 0 4px;
 }
 
-/* 倍速ボタン（自動プレイボタンの真上に安全ポップアップ・中央ボタンと被らない） */
+/* 倍速ボタン（手札カードと干渉しないよう安全マージン配置） */
 .speed-controls {
   position: absolute;
-  bottom: calc(100% + 8px);
+  bottom: calc(100% + 4px);
   left: 0;
   display: flex;
   gap: 3px;
   background: rgba(15, 23, 36, 0.95);
   padding: 3px 4px;
-  border-radius: 6px;
+  border-radius: 5px;
   border: 1px solid rgba(212, 175, 55, 0.6);
   box-shadow: 0 4px 12px rgba(0,0,0,0.7);
   z-index: 150;
@@ -911,7 +927,7 @@ body {
 }
 
 #player-area .pass-count {
-  margin-top: 2px;
+  margin-top: 1px;
   margin-bottom: 1px;
 }
 
