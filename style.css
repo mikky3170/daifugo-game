@@ -1,10 +1,10 @@
-/* [CSS Version: v1.2.1] 最終更新: 起動時オーバーレイ遮断バグ解消・モーダル完全非表示化 */
+/* [CSS Version: v1.2.2] 最終更新: 下部操作バー一本化（倍速ボタン被り解消）・超縦長セーフエリア最適化 */
 
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Noto+Serif+JP:wght@400;600&display=swap');
 
 :root {
   /* 16:10縦画面コンテナ基準のカードサイズ設定 */
-  --card-height: clamp(52px, 11vh, 92px);
+  --card-height: clamp(50px, 10.5vh, 88px);
   --card-width: calc(var(--card-height) * 0.7);
   --card-overlap: calc(var(--card-width) * -0.35);
 }
@@ -33,7 +33,7 @@ body {
 
 /* ============================================================
  * 16:10 タブレット縦画面基準 ビューポートコンテナ
- * 幅:高さ = 10:16 (0.625) を基本とし、PCでは中央固定・スマホではセーフエリア収縮
+ * 幅:高さ = 10:16 (0.625) を基本とし、PCでは中央固定・超縦長スマホではセーフエリア自然配分
  * ============================================================ */
 #app-viewport {
   width: 100%;
@@ -51,9 +51,9 @@ body {
   overflow: hidden;
   box-shadow: 0 0 50px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(212, 175, 55, 0.15);
   padding-top: max(4px, env(safe-area-inset-top, 0px));
-  padding-bottom: max(2px, env(safe-area-inset-bottom, 0px));
-  padding-left: max(2px, env(safe-area-inset-left, 0px));
-  padding-right: max(2px, env(safe-area-inset-right, 0px));
+  padding-bottom: max(4px, env(safe-area-inset-bottom, 0px));
+  padding-left: max(4px, env(safe-area-inset-left, 0px));
+  padding-right: max(4px, env(safe-area-inset-right, 0px));
 }
 
 /* ヘッダーエリア */
@@ -73,7 +73,7 @@ body {
 
 .main-title {
   font-family: 'Cinzel', serif;
-  font-size: clamp(16px, 2.6vh, 24px);
+  font-size: clamp(15px, 2.4vh, 22px);
   letter-spacing: 2px;
   color: #d4af37;
   background: linear-gradient(180deg, #fff3a8 0%, #d4af37 50%, #aa7c11 100%);
@@ -138,7 +138,7 @@ body {
 .rules-list li::before { content: "•"; color: #d4af37; }
 
 .btn-rule-help {
-  padding: 3px 9px;
+  padding: 3px 8px;
   font-size: 11px;
   background: linear-gradient(180deg, #d4af37 0%, #aa7c11 100%);
   color: #0d131d;
@@ -159,7 +159,7 @@ body {
 
 /* 勝利予想メーター */
 .eval-meter-container {
-  margin-top: 4px;
+  margin-top: 3px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -173,7 +173,7 @@ body {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
   background: rgba(10, 16, 26, 0.95);
   border: 1px solid rgba(212, 175, 55, 0.7);
   border-radius: 20px;
@@ -182,7 +182,7 @@ body {
 }
 
 .eval-meter-label {
-  font-size: clamp(11px, 1.6vh, 14px);
+  font-size: clamp(11px, 1.5vh, 13px);
   color: #fff3a8;
   letter-spacing: 1px;
   font-weight: 700;
@@ -194,7 +194,7 @@ body {
   display: flex;
   align-items: center;
   gap: 5px;
-  font-size: clamp(11px, 1.5vh, 13px);
+  font-size: clamp(10.5px, 1.4vh, 12.5px);
   color: #fff3a8;
 }
 .eval-meter-badge span.eval-pct {
@@ -202,7 +202,7 @@ body {
   color: #d4af37;
 }
 .eval-meter-bar-mini {
-  width: 40px;
+  width: 36px;
   height: 6px;
   background: #25313d;
   border-radius: 3px;
@@ -334,7 +334,7 @@ body {
 }
 
 /* ============================================================
- * ゲーム盤面 (16:10 縦画面レイアウト)
+ * ゲーム盤面 (16:10 縦画面・超縦長対応レイアウト)
  * ============================================================ */
 #game-board {
   display: grid;
@@ -462,22 +462,10 @@ body {
   transform: translate(-50%, 0) scale(1);
 }
 
-#cpu1 .dialogue-bubble {
-  left: 0;
-  transform: translate(0, 4px) scale(0.9);
-}
-#cpu1 .dialogue-bubble.show {
-  transform: translate(0, 0) scale(1);
-}
-
-#cpu3 .dialogue-bubble {
-  left: auto;
-  right: 0;
-  transform: translate(0, 4px) scale(0.9);
-}
-#cpu3 .dialogue-bubble.show {
-  transform: translate(0, 0) scale(1);
-}
+#cpu1 .dialogue-bubble { left: 0; transform: translate(0, 4px) scale(0.9); }
+#cpu1 .dialogue-bubble.show { transform: translate(0, 0) scale(1); }
+#cpu3 .dialogue-bubble { left: auto; right: 0; transform: translate(0, 4px) scale(0.9); }
+#cpu3 .dialogue-bubble.show { transform: translate(0, 0) scale(1); }
 
 /* 場のレイアウト */
 #field-area {
@@ -656,7 +644,7 @@ body {
   display: flex; 
   justify-content: center; 
   align-items: flex-end; 
-  height: calc(var(--card-height) + 20px); 
+  height: calc(var(--card-height) + 18px); 
   margin-bottom: 0px; 
   max-width: 100%; 
   padding: 0 4px; 
@@ -713,7 +701,7 @@ body {
 #player-hand .card:hover { transform: translateY(-6px); box-shadow: 0 6px 14px rgba(0, 0, 0, 0.6); }
 
 #player-hand .card.selected {
-  transform: translateY(-20px) !important;
+  transform: translateY(-18px) !important;
   box-shadow: 0 0 14px rgba(212, 175, 55, 0.95), 0 8px 16px rgba(0,0,0,0.65);
   border: 1px solid #d4af37;
 }
@@ -760,67 +748,60 @@ body {
   margin-left: 0;
 }
 
-/* 下部操作バー */
+/* ============================================================
+ * 下部操作バー (16:10統一・横1行配置＆倍速ボタン安全配置)
+ * ============================================================ */
 #bottom-bar {
   width: 100%;
   background: rgba(11, 16, 23, 0.96);
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   padding: 6px 8px;
   padding-bottom: max(6px, env(safe-area-inset-bottom, 0px));
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto auto;
-  gap: 6px 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
   backdrop-filter: blur(10px);
   z-index: 100;
   flex-shrink: 0;
+  position: relative;
+}
+
+.left-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  position: relative;
+  flex: 0 0 auto;
 }
 
 .center-actions {
-  grid-column: 1 / span 2;
-  grid-row: 1;
+  display: flex;
   justify-content: center;
-  gap: 8px;
-  display: flex;
-}
-.center-actions .btn {
-  height: clamp(38px, 5.5vh, 46px) !important;
-  font-size: clamp(12px, 2.2vh, 15px) !important;
-  letter-spacing: 0 !important;
-  padding: 0 4px;
-  border-radius: 6px;
-}
-
-#play-btn { flex: 1.5; max-width: 220px; }
-#pass-btn { flex: 0.8; max-width: 110px; }
-#go-exchange-btn, #exchange-btn { flex: 1; max-width: 240px; }
-
-.left-actions {
-  grid-column: 1;
-  grid-row: 2;
-  justify-content: flex-start;
-  display: flex;
+  align-items: center;
   gap: 6px;
-  position: relative;
+  flex: 1 1 auto;
+  max-width: 320px;
 }
+
 .right-actions {
-  grid-column: 2;
-  grid-row: 2;
-  justify-content: flex-end;
   display: flex;
-  gap: 6px;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 4px;
+  flex: 0 0 auto;
 }
 
+/* ボタンサイズ（16:10枠内で横1行に収まる設計） */
 .btn {
-  min-width: clamp(65px, 16%, 95px);
-  height: clamp(30px, 4.2vh, 36px);
-  border-radius: 4px;
+  height: clamp(32px, 4.8vh, 38px);
+  border-radius: 5px;
   border: 1px solid rgba(255, 255, 255, 0.15);
   background: linear-gradient(180deg, #3a4856 0%, #25313d 100%);
   color: #d0d7de;
   font-family: 'Noto Serif JP', serif;
-  font-size: clamp(11px, 1.5vh, 13px);
-  letter-spacing: 0.5px;
+  font-size: clamp(10.5px, 1.5vh, 12.5px);
+  letter-spacing: 0.3px;
   cursor: pointer;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
   transition: all 0.2s ease;
@@ -853,28 +834,57 @@ body {
   box-shadow: 0 0 10px rgba(212, 175, 55, 0.6);
 }
 
+/* メインアクションボタン */
+#play-btn {
+  flex: 1.4;
+  max-width: 140px;
+  font-weight: bold;
+  font-size: clamp(11.5px, 1.6vh, 13.5px);
+}
+
+#pass-btn {
+  flex: 0.9;
+  max-width: 80px;
+}
+
+#go-exchange-btn, #exchange-btn {
+  flex: 1;
+  max-width: 180px;
+  font-weight: bold;
+}
+
+#auto-play-btn, #stats-btn, #reset-btn {
+  min-width: 48px;
+  padding: 0 5px;
+}
+
+/* 倍速ボタン（自動プレイボタンの真上に安全ポップアップ・中央ボタンと被らない） */
 .speed-controls {
   position: absolute;
-  bottom: calc(100% + 6px);
+  bottom: calc(100% + 8px);
   left: 0;
   display: flex;
-  gap: 4px;
-  background: rgba(15, 23, 36, 0.9);
-  padding: 3px;
-  border-radius: 5px;
-  border: 1px solid rgba(212, 175, 55, 0.4);
+  gap: 3px;
+  background: rgba(15, 23, 36, 0.95);
+  padding: 3px 4px;
+  border-radius: 6px;
+  border: 1px solid rgba(212, 175, 55, 0.6);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.7);
   z-index: 150;
+  white-space: nowrap;
 }
+
 .btn-speed {
   background: #25313d;
   color: #8c9ba5;
   border: 1px solid rgba(255,255,255,0.1);
   border-radius: 3px;
-  padding: 2px 6px;
-  font-size: 11px;
+  padding: 2px 5px;
+  font-size: 10px;
   cursor: pointer;
   transition: all 0.2s;
 }
+
 .btn-speed.active {
   background: linear-gradient(180deg, #d4af37 0%, #aa7c11 100%);
   color: #000;

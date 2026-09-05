@@ -1,4 +1,4 @@
-<!-- [HTML Version: v1.2.1] 最終更新: 起動時オーバーレイ遮断バグ解消・モーダル完全非表示化 -->
+<!-- [HTML Version: v1.2.2] 最終更新: 下部操作バー一本化（倍速ボタン被り解消）・超縦長セーフエリア最適化 -->
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -13,8 +13,19 @@
        バージョン情報 ＆ 更新履歴マスター（index.htmlで一括管理）
        =================================================== -->
   <script>
-    const APP_VERSION = "v1.2.1";
+    const APP_VERSION = "v1.2.2";
     const VERSION_HISTORY = [
+      {
+        ver: "v1.2.2",
+        date: "2025-02-23",
+        title: "下部操作バー一本化＆スマホ倍速ボタン被り解消",
+        changes: [
+          "スマホ独自に残っていた下部バー2段組みを廃止し、16:10基準の1行配置へ完全一本化",
+          "自動プレイ時の倍速ボタンが『カードを出す』ボタンと重なる不具合を解消",
+          "20:9等の超縦長スマホにおいて、上下セーフエリアの余白が自然に配分されるようレイアウトを最適化"
+        ],
+        files: ["index.html (v1.2.2)", "style.css (v1.2.2)"]
+      },
       {
         ver: "v1.2.1",
         date: "2025-02-23",
@@ -432,10 +443,10 @@
       </div>
     </div>
 
-    <!-- 下部操作バー -->
+    <!-- 下部操作バー (16:10統一・横1行配置) -->
     <div id="bottom-bar">
       <div class="action-group left-actions">
-        <button class="btn" id="auto-play-btn">自動プレイ: OFF</button>
+        <button class="btn" id="auto-play-btn">自動: OFF</button>
         <div class="speed-controls" id="speed-controls" style="display: none;">
           <button class="btn-speed active" data-speed="1">1x</button>
           <button class="btn-speed" data-speed="2">2x</button>
@@ -457,7 +468,7 @@
   </div> <!-- /#app-viewport -->
 
   <!-- 画面右下の控えめなバージョン表示バッジ（クリックで更新履歴表示） -->
-  <div id="version-badge" title="クリックで更新履歴を表示">v1.2.1</div>
+  <div id="version-badge" title="クリックで更新履歴を表示">v1.2.2</div>
 
   <script src="app.js"></script>
 </body>
