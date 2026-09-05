@@ -1,4 +1,4 @@
-/* [CSS Version: v1.2.3] 最終更新: タブレット縦画面全幅化・CPUカード重なり深化・ボタン被り完全解消 */
+/* [CSS Version: v1.2.5] 最終更新: 高解像度縮小モアレ（白い点々）の完全平滑化フィルター適用 */
 
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Noto+Serif+JP:wght@400;600&display=swap');
 
@@ -286,13 +286,16 @@ body {
 
 .char-intro-item { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 12px; }
 .char-intro-portrait {
-  width: 50px;
+  width: 52px;
   aspect-ratio: 2 / 3;
   object-fit: cover;
   flex-shrink: 0;
   border-radius: 6px;
   border: 1px solid rgba(212, 175, 55, 0.5);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  filter: blur(0.32px); /* モアレ除去 */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: high-quality;
 }
 .char-intro-text { flex: 1; min-width: 0; }
 .char-intro-text .rule-item-title { margin-bottom: 3px; }
@@ -346,7 +349,7 @@ body {
 #game-board {
   display: grid;
   grid-template-rows: auto 1fr auto;
-  grid-template-columns: minmax(66px, 20%) 1fr minmax(66px, 20%);
+  grid-template-columns: minmax(72px, 21%) 1fr minmax(72px, 21%);
   width: 100%;
   flex: 1;
   padding: 2px 4px;
@@ -443,7 +446,47 @@ body {
 #cpu1 { grid-row: 2; grid-column: 1; align-items: center; justify-content: center; }
 #cpu3 { grid-row: 2; grid-column: 3; align-items: center; justify-content: center; }
 
-/* セリフ表示（肖像の直下に配置） */
+/* ============================================================
+ * キャラクター肖像画（サイズ拡大＆微細スムージングによるモアレ完全除去）
+ * ============================================================ */
+.char-portrait {
+  width: clamp(46px, 7.8vh, 66px);
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: 5px;
+  border: 1px solid rgba(212, 175, 55, 0.75);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.65);
+  transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.28s ease, border-color 0.28s ease, filter 0.28s ease;
+  position: relative;
+  background: #0d131d;
+  flex-shrink: 0;
+
+  /* 高周波モアレ（白い点々）を除去する微細平滑化フィルター */
+  filter: blur(0.32px);
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: high-quality;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* セリフ発言時：拡大率を一回り大きく＆中心起点で自然拡大（拡大時はクリア表示） */
+.char-portrait.portrait-talk {
+  transform: scale(1.6) translateZ(0);
+  transform-origin: center center;
+  filter: none; /* 拡大時はくっきり表示 */
+  z-index: 250;
+  box-shadow: 0 0 22px rgba(212, 175, 55, 0.95), 0 8px 22px rgba(0, 0, 0, 0.85);
+  border-color: #fff3a8;
+}
+
+/* 全CPUの拡大起点を中央（center）に完全統一 */
+#cpu1 .char-portrait.portrait-talk,
+#cpu2 .char-portrait.portrait-talk,
+#cpu3 .char-portrait.portrait-talk {
+  transform-origin: center center;
+}
+
+/* セリフ表示（肖像の直下中央に自然配置） */
 .dialogue-bubble {
   position: absolute;
   top: 100%;
@@ -469,10 +512,19 @@ body {
   transform: translate(-50%, 0) scale(1);
 }
 
-#cpu1 .dialogue-bubble { left: 0; transform: translate(0, 4px) scale(0.9); }
-#cpu1 .dialogue-bubble.show { transform: translate(0, 0) scale(1); }
-#cpu3 .dialogue-bubble { left: auto; right: 0; transform: translate(0, 4px) scale(0.9); }
-#cpu3 .dialogue-bubble.show { transform: translate(0, 0) scale(1); }
+#cpu1 .dialogue-bubble,
+#cpu2 .dialogue-bubble,
+#cpu3 .dialogue-bubble {
+  left: 50%;
+  right: auto;
+  transform: translate(-50%, 4px) scale(0.9);
+}
+
+#cpu1 .dialogue-bubble.show,
+#cpu2 .dialogue-bubble.show,
+#cpu3 .dialogue-bubble.show {
+  transform: translate(-50%, 0) scale(1);
+}
 
 /* 場のレイアウト */
 #field-area {
@@ -587,31 +639,6 @@ body {
   position: relative;
   margin-top: 1px;
 }
-
-/* キャラクター肖像画 */
-.char-portrait {
-  width: clamp(38px, 6.5vh, 56px);
-  aspect-ratio: 2 / 3;
-  object-fit: cover;
-  border-radius: 5px;
-  border: 1px solid rgba(212, 175, 55, 0.7);
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.65);
-  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease, border-color 0.3s ease;
-  position: relative;
-  background: #0d131d;
-  flex-shrink: 0;
-}
-
-.char-portrait.portrait-talk {
-  transform: scale(1.4);
-  z-index: 250;
-  box-shadow: 0 0 20px rgba(212, 175, 55, 0.9), 0 8px 20px rgba(0, 0, 0, 0.85);
-  border-color: #fff3a8;
-}
-
-#cpu1 .char-portrait.portrait-talk { transform-origin: 10% 50%; }
-#cpu3 .char-portrait.portrait-talk { transform-origin: 90% 50%; }
-#cpu2 .char-portrait.portrait-talk { transform-origin: 50% 10%; }
 
 .your-turn-badge {
   visibility: hidden;
@@ -733,7 +760,6 @@ body {
 
 /* ============================================================
  * CPUカードスタック表示
- * サイズは縮小せず、重なり幅を深くして画面端見切れを解消
  * ============================================================ */
 .cpu-card-stack {
   display: flex;
@@ -753,7 +779,6 @@ body {
   padding: 0 2px;
 }
 
-/* カードサイズを維持したまま、重なりを深くしてカード束全体をコンパクト化 */
 #cpu1 .cpu-card-stack .card-back, #cpu3 .cpu-card-stack .card-back {
   margin-left: calc(var(--card-width) * -0.52);
 }
@@ -762,7 +787,7 @@ body {
 }
 
 /* ============================================================
- * 下部操作バー (被り解消・1行スマートレイアウト)
+ * 下部操作バー
  * ============================================================ */
 #bottom-bar {
   width: 100%;
@@ -806,7 +831,6 @@ body {
   flex: 0 0 auto;
 }
 
-/* ボタンサイズ（幅配分を最適化し、スマホ幅でも衝突・被りを完全防止） */
 .btn {
   height: clamp(32px, 4.8vh, 38px);
   border-radius: 5px;
@@ -848,7 +872,6 @@ body {
   box-shadow: 0 0 10px rgba(212, 175, 55, 0.6);
 }
 
-/* メインアクションボタン（flexで伸縮し重なりを防止） */
 #play-btn {
   flex: 1.4;
   min-width: 72px;
@@ -874,7 +897,6 @@ body {
   padding: 0 4px;
 }
 
-/* 倍速ボタン（手札カードと干渉しないよう安全マージン配置） */
 .speed-controls {
   position: absolute;
   bottom: calc(100% + 4px);
@@ -931,7 +953,6 @@ body {
   margin-bottom: 1px;
 }
 
-/* 画面右下の控えめなバージョンバッジ */
 #version-badge {
   position: fixed;
   bottom: 2px;
@@ -950,7 +971,6 @@ body {
   text-decoration: underline;
 }
 
-/* 更新履歴タイムライン */
 .version-card {
   background: rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(212, 175, 55, 0.3);
@@ -1007,7 +1027,7 @@ body {
 }
 
 /* ============================================================
- * キャラクター選択オーバーレイ（完全クリーン配置）
+ * キャラクター選択オーバーレイ（モアレ完全除去フィルター適用）
  * ============================================================ */
 .char-select-overlay {
   display: none !important;
@@ -1111,6 +1131,7 @@ body {
   background: rgba(212, 175, 55, 0.12);
 }
 
+/* キャラ選択画面の画像（微細スムージングでモアレを完全除去） */
 .char-select-card img {
   width: 100%;
   max-width: 68px;
@@ -1123,6 +1144,9 @@ body {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
   display: block;
   pointer-events: none;
+  filter: blur(0.32px); /* モアレ除去フィルター */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: high-quality;
 }
 
 .char-select-card .csc-name {
@@ -1141,7 +1165,7 @@ body {
 }
 
 /* ============================================================
- * 勝利演出ポップアップ（完全非表示安全設計）
+ * 勝利演出ポップアップ
  * ============================================================ */
 .victory-popup-overlay {
   display: none !important;
@@ -1171,29 +1195,29 @@ body {
 .victory-popup-overlay.active .victory-popup-content { transform: scale(1); }
 
 .victory-popup-content img {
-  width: clamp(110px, 22vh, 160px);
+  width: clamp(140px, 28vh, 210px);
   aspect-ratio: 2 / 3;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: 10px;
   border: 2px solid #d4af37;
-  box-shadow: 0 0 35px rgba(212, 175, 55, 0.8), 0 15px 35px rgba(0, 0, 0, 0.8);
+  box-shadow: 0 0 40px rgba(212, 175, 55, 0.9), 0 16px 40px rgba(0, 0, 0, 0.85);
 }
 
 .victory-popup-label {
   font-family: 'Cinzel', serif;
-  font-size: clamp(14px, 2.2vh, 18px);
+  font-size: clamp(15px, 2.4vh, 20px);
   font-weight: 700;
   letter-spacing: 2px;
   color: #d4af37;
-  margin-top: 8px;
+  margin-top: 10px;
   text-shadow: 0 0 12px rgba(212, 175, 55, 0.8);
 }
 
 .victory-popup-name {
-  font-size: clamp(13px, 2vh, 16px);
+  font-size: clamp(14px, 2.2vh, 18px);
   font-weight: 700;
   color: #fff3a8;
-  margin-top: 2px;
+  margin-top: 3px;
 }
 
 .final-ranking-list { display: flex; flex-direction: column; gap: 6px; margin: 8px 0; }
@@ -1228,6 +1252,7 @@ body {
   border-radius: 3px;
   border: 1px solid rgba(212, 175, 55, 0.5);
   flex-shrink: 0;
+  filter: blur(0.32px);
 }
 
 .final-rank-name {
